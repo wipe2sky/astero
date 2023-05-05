@@ -74,7 +74,7 @@ public class MainGameScreen implements Screen {
 
     @Override
     public void dispose() {
-//        game.batch.dispose();
         spaceship.dispose();
+        asteroids.forEach(Asteroid::dispose);
     }
 }

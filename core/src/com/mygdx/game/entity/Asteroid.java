@@ -11,8 +11,8 @@ public class Asteroid {
     private final float halfSize = size / 2;
     private final Vector2 speed;
     private final Vector2 position = new Vector2();
-    private final Vector2 angle = new Vector2(0, 0);
     private final Texture texture;
+    private float rotation = MathUtils.random(0, 360);
     private TextureRegion textureRegion;
 
 
@@ -24,6 +24,7 @@ public class Asteroid {
     }
 
     public void render(Batch batch) {
+        rotate();
         batch.draw(
                 textureRegion,
                 position.x,
@@ -34,8 +35,16 @@ public class Asteroid {
                 size,
                 1,
                 1,
-                angle.angleDeg()
+                rotation
         );
+    }
+
+    private void rotate() {
+        if (rotation++ > 360) {
+            rotation = 0.15f;
+        } else {
+            rotation += 0.15f;
+        }
     }
 
     public void dispose() {
