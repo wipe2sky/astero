@@ -17,9 +17,11 @@ public class Spaceship {
 
     private final float screenWidth;
     private final float screenHeight;
+    private final Texture texture;
+    private final CollisionRect collisionRect;
+
 
     private TextureRegion textureRegion;
-    private final Texture texture;
 
 
     public Spaceship() {
@@ -27,12 +29,18 @@ public class Spaceship {
         this.textureRegion = new TextureRegion(texture);
         position.set(Gdx.graphics.getWidth() / 2 - size / 2,
                 Gdx.graphics.getHeight() / 2 - size / 2);
+        this.collisionRect = new CollisionRect(position.x, position.y, (int) size);
         this.screenWidth = Gdx.graphics.getWidth();
         this.screenHeight = Gdx.graphics.getHeight();
     }
 
+    public CollisionRect getCollisionRect() {
+        return collisionRect;
+    }
+
     public void render(Batch batch) {
         Bound.checkBounds(position, size, screenWidth, screenHeight);
+        collisionRect.setPosition(position);
         batch.draw(
                 textureRegion,
                 position.x,

@@ -43,8 +43,18 @@ public class MainGameScreen implements Screen {
         spaceship.moveTo(game.inputProcessor.getDirection());
         spaceship.rotateTo(game.inputProcessor.getDirection());
 
-        asteroids.forEach(asteroid -> asteroid.moveTo());
-//
+        for (int i = 0; i < asteroids.size(); i++) {
+            asteroids.get(i).moveTo();
+            if (spaceship.getCollisionRect().collidesWith(asteroids.get(i).getCollisionRect())) {
+                game.setScreen(new MainMenuScreen(game));
+            }
+            for (int j = i + 1; j < asteroids.size(); j++) {
+                if (asteroids.get(i).getCollisionRect().collidesWith(asteroids.get(j).getCollisionRect())) {
+                    asteroids.get(i).setSpeed(-asteroids.get(i).getSpeed().x, asteroids.get(i).getSpeed().y);
+                    asteroids.get(j).setSpeed(asteroids.get(j).getSpeed().x, -asteroids.get(j).getSpeed().y);
+                }
+            }
+        }
 
         game.batch.begin();
         spaceship.render(game.batch);

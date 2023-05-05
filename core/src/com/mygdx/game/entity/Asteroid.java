@@ -17,25 +17,36 @@ public class Asteroid {
     private float rotation = MathUtils.random(0, 360);
     private final float screenWidth;
     private final float screenHeight;
+    private final CollisionRect collisionRect;
     private TextureRegion textureRegion;
 
 
     public Asteroid(float x, float y) {
         this.texture = new Texture("asteroid.png");
         this.textureRegion = new TextureRegion(texture);
+        this.collisionRect = new CollisionRect(x, y, (int) size);
         position.set(x, y);
-        speed = getSpeed();
+        speed = new Vector2(MathUtils.random(-2f, 2f), MathUtils.random(-2f, 2f));
         this.screenWidth = Gdx.graphics.getWidth();
         this.screenHeight = Gdx.graphics.getHeight();
     }
 
-    private static Vector2 getSpeed() {
-        return new Vector2(MathUtils.random(-2f, 2f), MathUtils.random(-2f, 2f));
+    public Vector2 getSpeed() {
+        return speed;
+    }
+
+    public void setSpeed(float x, float y){
+        speed.set(x, y);
+    }
+
+    public CollisionRect getCollisionRect() {
+        return collisionRect;
     }
 
     public void render(Batch batch) {
         rotate();
         Bound.checkBounds(position, size, screenWidth, screenHeight);
+        collisionRect.setPosition(position);
         batch.draw(
                 textureRegion,
                 position.x,

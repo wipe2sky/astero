@@ -17,4 +17,5 @@ public class Bound {
             position.set(position.x, -size / 2);
         }
     }
+
 }
