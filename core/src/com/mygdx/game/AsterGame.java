@@ -7,10 +7,8 @@ import com.mygdx.game.adapter.KeyboardAdapter;
 import com.mygdx.game.screen.MainMenuScreen;
 
 public class AsterGame extends Game {
-//    public static final int WIDTH = 640;
     public static final int WIDTH = 1280;
     public static final int HEIGHT = 720;
-//    public static final int HEIGHT = 480;
 
     public SpriteBatch batch;
     public KeyboardAdapter inputProcessor = new KeyboardAdapter();
