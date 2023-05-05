@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
+import com.mygdx.game.utils.Bound;
 
 public class Spaceship {
     public static final float SPACESHIP_SPEED = 180;
@@ -13,6 +14,9 @@ public class Spaceship {
     private final float halfSize = size / 2;
     private final Vector2 position = new Vector2();
     private final Vector2 angle = new Vector2();
+
+    private final float screenWidth;
+    private final float screenHeight;
 
     private TextureRegion textureRegion;
     private final Texture texture;
@@ -23,9 +27,12 @@ public class Spaceship {
         this.textureRegion = new TextureRegion(texture);
         position.set(Gdx.graphics.getWidth() / 2 - size / 2,
                 Gdx.graphics.getHeight() / 2 - size / 2);
+        this.screenWidth = Gdx.graphics.getWidth();
+        this.screenHeight = Gdx.graphics.getHeight();
     }
 
     public void render(Batch batch) {
+        Bound.checkBounds(position, size, screenWidth, screenHeight);
         batch.draw(
                 textureRegion,
                 position.x,
@@ -50,7 +57,7 @@ public class Spaceship {
 
 
     public void rotateTo(Vector2 direction) {
-        if (direction.x != 0 || direction.y != 0 ) {
+        if (direction.x != 0 || direction.y != 0) {
             angle.set(direction.y, -direction.x);
         }
     }

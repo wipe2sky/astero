@@ -47,32 +47,10 @@ public class KeyboardAdapter extends InputAdapter {
     public Vector2 getDirection() {
         direction.set(0, 0);
 
-        if (leftPressed) {
-            direction.add(-SPACESHIP_SPEED * Gdx.graphics.getDeltaTime(), 0);
-//            if (direction.x <= 0) {
-//                direction.set(Gdx.graphics.getWidth() + SHIP_WIDTH, direction.y);
-//            }
-
-        }
-        if (rightPressed) {
-            direction.add(SPACESHIP_SPEED * Gdx.graphics.getDeltaTime(), 0);
-//            if (direction.x >= Gdx.graphics.getWidth() - SHIP_WIDTH) {
-//                direction.x = 0 - SHIP_WIDTH;
-//            }
-        }
-        if (upPressed) {
-            direction.add(0, SPACESHIP_SPEED * Gdx.graphics.getDeltaTime());
-//            if (direction.y >= Gdx.graphics.getHeight() - SHIP_HEIGHT) {
-//                direction.y = -SHIP_HEIGHT;
-//            }
-        }
-        if (downPressed) {
-            direction.add(0, -SPACESHIP_SPEED * Gdx.graphics.getDeltaTime());
-//            if (direction.y <= 0) {
-//                direction.y = Gdx.graphics.getHeight() + SHIP_HEIGHT;
-//            }
-        }
-
+        if (leftPressed) direction.add(-SPACESHIP_SPEED * Gdx.graphics.getDeltaTime(), 0);
+        if (rightPressed) direction.add(SPACESHIP_SPEED * Gdx.graphics.getDeltaTime(), 0);
+        if (upPressed) direction.add(0, SPACESHIP_SPEED * Gdx.graphics.getDeltaTime());
+        if (downPressed) direction.add(0, -SPACESHIP_SPEED * Gdx.graphics.getDeltaTime());
         return direction;
     }
 }
