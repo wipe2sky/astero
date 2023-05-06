@@ -2,6 +2,7 @@ package com.mygdx.game.screen;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.mygdx.game.AsterGame;
 import com.mygdx.game.entity.Button;
@@ -15,6 +16,8 @@ public class MainMenuScreen implements Screen {
     private final Button playButtonInactive;
     private final Button exitButtonActive;
     private final Button exitButtonInactive;
+    private final Texture backgroundTexture;
+
 
     public MainMenuScreen(AsterGame game) {
         this.game = game;
@@ -22,6 +25,8 @@ public class MainMenuScreen implements Screen {
         this.playButtonInactive = new Button(250, 120, "button/play_button_inactive.png");
         this.exitButtonActive = new Button(300, 120, "button/exit_button_active.png");
         this.exitButtonInactive = new Button(300, 120, "button/exit_button_inactive.png");
+        this.backgroundTexture = new Texture("background.jpg");
+
     }
 
     @Override
@@ -33,6 +38,8 @@ public class MainMenuScreen implements Screen {
     public void render(float delta) {
         ScreenUtils.clear(0.3f, 0.3f, 0.3f, 1);
         game.batch.begin();
+
+        game.batch.draw(backgroundTexture, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
         int x = AsterGame.WIDTH / 2 - exitButtonActive.getWidthButton() / 2;
 

@@ -3,6 +3,7 @@ package com.mygdx.game.screen;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.math.MathUtils;
@@ -27,6 +28,8 @@ public class MainGameScreen implements Screen {
     private final Spaceship spaceship;
     private final Health health;
     private float shootTimer;
+    private final Texture backgroundTexture;
+
     private List<Asteroid> asteroids;
     private List<Bullet> bullets;
     private List<Explosion> explosions;
@@ -56,6 +59,7 @@ public class MainGameScreen implements Screen {
         this.scoreLayout = new GlyphLayout(scoreFont, String.valueOf(score));
         this.heathFont = new BitmapFont(Gdx.files.internal("font/score.fnt"));
         this.healthLayout = new GlyphLayout(scoreFont, String.valueOf(healthCount));
+        this.backgroundTexture = new Texture("background.jpg");
     }
 
     @Override
@@ -142,14 +146,16 @@ public class MainGameScreen implements Screen {
 
 
         game.batch.begin();
+        game.batch.draw(backgroundTexture, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         scoreLayout.setText(scoreFont, "SCORE:" + score);
         scoreFont.draw(game.batch, scoreLayout, 20, Gdx.graphics.getHeight() - 20 - scoreLayout.height);
 
-        if (healthCount == 3){
+        if (healthCount == 3) {
             heathFont.setColor(Color.GREEN);
-        } if (healthCount == 2){
+        }
+        if (healthCount == 2) {
             heathFont.setColor(Color.YELLOW);
-        } else if(healthCount < 2){
+        } else if (healthCount < 2) {
             heathFont.setColor(Color.RED);
         }
         healthLayout.setText(heathFont, "x" + healthCount);
@@ -191,5 +197,6 @@ public class MainGameScreen implements Screen {
         bullets.forEach(Bullet::dispose);
         asteroids.forEach(Asteroid::dispose);
         health.dispose();
+        backgroundTexture.dispose();
     }
 }

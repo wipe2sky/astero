@@ -14,7 +14,8 @@ public class GameOverScreen implements Screen {
     private static final int BANNER_WIDTH = 500;
     private static final int BANNER_HEIGHT = 200;
     private static int highScore = 0;
-    AsterGame game;
+    private final Texture backgroundTexture;
+    private final AsterGame game;
     private int score;
 
     Texture gameOverBanner;
@@ -30,6 +31,7 @@ public class GameOverScreen implements Screen {
 
         gameOverBanner = new Texture("game_over.png");
         scoreFont = new BitmapFont(Gdx.files.internal("font/score.fnt"));
+        this.backgroundTexture = new Texture("background.jpg");
     }
 
     @Override
@@ -42,6 +44,7 @@ public class GameOverScreen implements Screen {
         ScreenUtils.clear(0.3f, 0.3f, 0.3f, 1);
         game.batch.begin();
 
+        game.batch.draw(backgroundTexture, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         game.batch.draw(gameOverBanner,
                 (Gdx.graphics.getWidth() - BANNER_WIDTH) >> 1,
                 ((Gdx.graphics.getHeight() - BANNER_HEIGHT) >> 1) - 15f,

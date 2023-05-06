@@ -12,13 +12,11 @@ public class Bullet {
     public static final int MAX_COUNT = 5;
     public static final float SHOOT_WAIT_TIME = 0.3f;
     private static final int SPEED = 300;
-
-    private static Texture texture;
-
     private static final int WIDTH = 10;
     private static final int HEIGHT = 32;
     private static final float HALF_WIDTH = WIDTH >> 1;
     private static final float HALF_HEIGHT = HEIGHT >> 1;
+    private final Texture texture;
     private final TextureRegion textureRegion;
     private final Vector2 position = new Vector2();
     private final Vector2 angle = new Vector2();
@@ -37,11 +35,7 @@ public class Bullet {
         calcPosition(angle, position);
         this.angle.set(angle);
         this.collisionRect = new CollisionRect(position.x, position.y, WIDTH, HEIGHT);
-
-
-        if (texture == null) {
-            texture = new Texture("bullet.png");
-        }
+        this.texture = new Texture("bullet.png");
 
         this.textureRegion = new TextureRegion(texture);
     }
