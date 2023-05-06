@@ -2,11 +2,14 @@ package com.mygdx.game.screen;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.mygdx.game.AsterGame;
 import com.mygdx.game.entity.Asteroid;
 import com.mygdx.game.entity.Bullet;
+import com.mygdx.game.entity.Explosion;
 import com.mygdx.game.entity.Spaceship;
 
 import java.util.ArrayList;
@@ -22,7 +25,12 @@ public class MainGameScreen implements Screen {
     private final Spaceship spaceship;
     private float shootTimer;
     private List<Asteroid> asteroids;
-    private List<Bullet> bullets = new ArrayList<>();
+    private List<Bullet> bullets;
+    private List<Explosion> explosions;
+    private BitmapFont scoreFont;
+    private int score;
+    GlyphLayout scoreLayout;
+
 
     public MainGameScreen(AsterGame game) {
         this.game = game;
@@ -34,6 +42,10 @@ public class MainGameScreen implements Screen {
                     int y = MathUtils.random(Gdx.graphics.getHeight());
                     return new Asteroid(x, y);
                 }).collect(Collectors.toList());
+        this.bullets = new ArrayList<>();
+        this.explosions = new ArrayList<>();
+        this.scoreFont = new BitmapFont(Gdx.files.internal("font/score.fnt"));
+        this.scoreLayout = new GlyphLayout(scoreFont, String.valueOf(score));
     }
 
     @Override
@@ -70,18 +82,29 @@ public class MainGameScreen implements Screen {
             }
         }
 
+        List<Explosion> explosionsToRemove = new ArrayList<>();
+        explosions.forEach(explosion -> {
+            explosion.update(delta);
+            if(explosion.isRemoved()){
+                explosionsToRemove.add(explosion);
+            }
+        });
+
         bullets.forEach(bullet -> {
             asteroids.forEach(asteroid ->
             {
                 if (bullet.getCollisionRect().collidesWith(asteroid.getCollisionRect())) {
                     destroyedBullets.add(bullet);
                     destroyedAsteroids.add(asteroid);
+                    explosions.add(new Explosion(asteroid.getPosition().x, asteroid.getPosition().y));
+                    score += 5;
                 }
             });
         });
 
         asteroids.removeAll(destroyedAsteroids);
         bullets.removeAll(destroyedBullets);
+        explosions.removeAll(explosionsToRemove);
 
         while (asteroids.size() < MAX_ASTEROIDS_COUNT) {
             asteroids.add(new Asteroid(MathUtils.random(Gdx.graphics.getWidth()),
@@ -99,9 +122,12 @@ public class MainGameScreen implements Screen {
 
 
         game.batch.begin();
+        scoreLayout.setText(scoreFont, "SCORE:" + score);
+        scoreFont.draw(game.batch, scoreLayout, 40, Gdx.graphics.getHeight() - 20 - scoreLayout.height);
         spaceship.render(game.batch);
         asteroids.forEach(asteroid -> asteroid.render(game.batch));
         bullets.forEach(bullet -> bullet.render(game.batch));
+        explosions.forEach(explosion -> explosion.render(game.batch));
         game.batch.end();
     }
 

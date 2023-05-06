@@ -56,6 +56,10 @@ public class Asteroid {
         speed.set(x, y);
     }
 
+    public Vector2 getPosition() {
+        return position;
+    }
+
     public CollisionRect getCollisionRect() {
         return collisionRect;
     }
