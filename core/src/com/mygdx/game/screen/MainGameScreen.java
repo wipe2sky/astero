@@ -9,21 +9,26 @@ import com.mygdx.game.entity.Asteroid;
 import com.mygdx.game.entity.Bullet;
 import com.mygdx.game.entity.Spaceship;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+
+import static com.mygdx.game.entity.Asteroid.MAX_ASTEROIDS_COUNT;
 
 public class MainGameScreen implements Screen {
 
     private final AsterGame game;
     private final Spaceship spaceship;
+    private float shootTimer;
     private List<Asteroid> asteroids;
-    private Bullet bullet;
+    private List<Bullet> bullets = new ArrayList<>();
 
     public MainGameScreen(AsterGame game) {
         this.game = game;
         this.spaceship = new Spaceship();
-        this.asteroids = IntStream.range(0, 5)
+        this.shootTimer = 0;
+        this.asteroids = IntStream.range(0, MAX_ASTEROIDS_COUNT)
                 .mapToObj(i -> {
                     int x = MathUtils.random(Gdx.graphics.getWidth());
                     int y = MathUtils.random(Gdx.graphics.getHeight());
@@ -42,12 +47,16 @@ public class MainGameScreen implements Screen {
         spaceship.moveTo(game.inputProcessor.getDirection());
         spaceship.rotateTo(game.inputProcessor.getDirection());
 
-        if (bullet != null && !bullet.destroyed) {
+        List<Bullet> destroyedBullets = new ArrayList<>();
+        bullets.forEach(bullet -> {
             bullet.update(delta);
-        } else if (game.inputProcessor.isSpacePressed()) {
-            bullet = new Bullet(spaceship.getPosition(), spaceship.getAngle(), spaceship.getSize());
-        }
+            if (bullet.isDestroyed()) {
+                destroyedBullets.add(bullet);
+            }
+        });
 
+
+        List<Asteroid> destroyedAsteroids = new ArrayList<>();
         for (int i = 0; i < asteroids.size(); i++) {
             asteroids.get(i).moveTo();
             if (spaceship.getCollisionRect().collidesWith(asteroids.get(i).getCollisionRect())) {
@@ -61,10 +70,38 @@ public class MainGameScreen implements Screen {
             }
         }
 
+        bullets.forEach(bullet -> {
+            asteroids.forEach(asteroid ->
+            {
+                if (bullet.getCollisionRect().collidesWith(asteroid.getCollisionRect())) {
+                    destroyedBullets.add(bullet);
+                    destroyedAsteroids.add(asteroid);
+                }
+            });
+        });
+
+        asteroids.removeAll(destroyedAsteroids);
+        bullets.removeAll(destroyedBullets);
+
+        while (asteroids.size() < MAX_ASTEROIDS_COUNT) {
+            asteroids.add(new Asteroid(MathUtils.random(Gdx.graphics.getWidth()),
+                    MathUtils.random(Gdx.graphics.getWidth())));
+        }
+
+
+        shootTimer += delta;
+        if (game.inputProcessor.isSpacePressed()
+                && bullets.size() < Bullet.MAX_COUNT
+                && shootTimer >= Bullet.SHOOT_WAIT_TIME) {
+            shootTimer = 0;
+            bullets.add(new Bullet(spaceship.getPosition(), spaceship.getAngle(), spaceship.getSize()));
+        }
+
+
         game.batch.begin();
         spaceship.render(game.batch);
         asteroids.forEach(asteroid -> asteroid.render(game.batch));
-        if (bullet != null && !bullet.destroyed) bullet.render(game.batch);
+        bullets.forEach(bullet -> bullet.render(game.batch));
         game.batch.end();
     }
 
@@ -91,7 +128,7 @@ public class MainGameScreen implements Screen {
     @Override
     public void dispose() {
         spaceship.dispose();
-        bullet.dispose();
+        bullets.forEach(Bullet::dispose);
         asteroids.forEach(Asteroid::dispose);
     }
 }

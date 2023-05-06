@@ -4,12 +4,14 @@ import com.badlogic.gdx.math.Vector2;
 
 public class CollisionRect {
 
-    private final int size;
+    private final int width;
+    private final int height;
     private Vector2 position = new Vector2();
 
-    public CollisionRect(float x, float y, int size) {
+    public CollisionRect(float x, float y, int width, int height) {
         position.set(x, y);
-        this.size = size;
+        this.width = width;
+        this.height = height;
     }
 
     public void setPosition(Vector2 newPosition) {
@@ -17,9 +19,9 @@ public class CollisionRect {
     }
 
     public boolean collidesWith(CollisionRect rect) {
-        return position.x < rect.position.x + rect.size
-                && position.y < rect.position.y + rect.size
-                && position.x + size > rect.position.x
-                && position.y + size > rect.position.y;
+        return position.x < rect.position.x + rect.width
+                && position.y < rect.position.y + rect.height
+                && position.x + width > rect.position.x
+                && position.y + height > rect.position.y;
     }
 }

@@ -38,7 +38,6 @@ public class KeyboardAdapter extends InputAdapter {
         if (keycode == Input.Keys.W) upPressed = false;
         if (keycode == Input.Keys.S) downPressed = false;
         if (keycode == Input.Keys.SPACE) spacePressed = false;
-
         return false;
     }
 

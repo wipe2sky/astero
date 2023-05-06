@@ -9,27 +9,35 @@ import com.badlogic.gdx.math.Vector2;
 import java.util.HashMap;
 
 public class Bullet {
-    private static final int SPEED = 100;
+    public static final int MAX_COUNT = 5;
+    public static final float SHOOT_WAIT_TIME = 0.3f;
+    private static final int SPEED = 300;
 
-    private final float height = 32;
-    private final float width = 10;
-    private final float halfHeight = height / 2;
-    private final float halfWidth = width / 2;
     private static Texture texture;
-    private final TextureRegion textureRegion;
 
+    private final int width = 10;
+    private final int height = 32;
+    private final float halfWidth = width / 2;
+    private final float halfHeight = height / 2;
+    private final TextureRegion textureRegion;
     private final Vector2 position = new Vector2();
     private final Vector2 angle = new Vector2();
-    private final HashMap<Float, Vector2> draft = new HashMap<>();
+    private final HashMap<Float, Vector2> startBulletDraft = new HashMap<>();
+    private final HashMap<Float, Vector2> moveBulletDraft = new HashMap<>();
+    private final CollisionRect collisionRect;
 
-    public boolean destroyed = false;
+
+    private boolean destroyed;
 
 
     public Bullet(Vector2 position, Vector2 angle, float size) {
         this.position.set(position).add(size / 2, size + 1);
-        setDraft(size);
+        setStartBulletDraft(size);
+        setMoveBulletDraft();
         calcPosition(angle, position);
         this.angle.set(angle);
+        this.collisionRect = new CollisionRect(position.x, position.y, width, height);
+
 
         if (texture == null) {
             texture = new Texture("bullet.png");
@@ -38,25 +46,47 @@ public class Bullet {
         this.textureRegion = new TextureRegion(texture);
     }
 
-    private void setDraft(float size) {
-        draft.put(0f, new Vector2(size / 2 - 5, size + 4));
-        draft.put(45f, new Vector2(-5, size - 15));
-        draft.put(90f, new Vector2(5, size / 2 - 15));
-        draft.put(135f, new Vector2(0, -7));
-        draft.put(180f, new Vector2(size / 2 - 5, -18));
-        draft.put(225f, new Vector2(size, -17));
-        draft.put(270f, new Vector2(size + 4, size / 2 - 15));
-        draft.put(315f, new Vector2(size , size - 10));
-        draft.put(360f, new Vector2(size / 2 - 5, size + 4));
+
+    public CollisionRect getCollisionRect() {
+        return collisionRect;
+    }
+
+    public boolean isDestroyed() {
+        return destroyed;
+    }
+
+    private void setStartBulletDraft(float size) {
+        startBulletDraft.put(0f, new Vector2(size / 2 - 5, size + 4));
+        startBulletDraft.put(45f, new Vector2(-5, size - 15));
+        startBulletDraft.put(90f, new Vector2(5, size / 2 - 15));
+        startBulletDraft.put(135f, new Vector2(0, -7));
+        startBulletDraft.put(180f, new Vector2(size / 2 - 5, -18));
+        startBulletDraft.put(225f, new Vector2(size, -17));
+        startBulletDraft.put(270f, new Vector2(size + 4, size / 2 - 15));
+        startBulletDraft.put(315f, new Vector2(size, size - 10));
+        startBulletDraft.put(360f, new Vector2(size / 2 - 5, size + 4));
+    }
+
+    private void setMoveBulletDraft() {
+        moveBulletDraft.put(0f, new Vector2(0, 1));
+        moveBulletDraft.put(45f, new Vector2(-1, 1));
+        moveBulletDraft.put(90f, new Vector2(-1, 0));
+        moveBulletDraft.put(135f, new Vector2(-1, -1));
+        moveBulletDraft.put(180f, new Vector2(0, -1));
+        moveBulletDraft.put(225f, new Vector2(1, -1));
+        moveBulletDraft.put(270f, new Vector2(1, 0));
+        moveBulletDraft.put(315f, new Vector2(1, 1));
+        moveBulletDraft.put(360f, new Vector2(0, 0));
     }
 
     private void calcPosition(Vector2 angle, Vector2 position) {
-        this.position.set(position).add(draft.get(Math.abs(angle.angleDeg())));
+        this.position.set(position).add(startBulletDraft.get(Math.abs(angle.angleDeg())));
     }
 
     public void update(float deltaTime) {
         if (angle.x == 0.0f && angle.y == 0.0f) angle.set(3, 0);
-        position.add(SPEED * deltaTime * -angle.y, SPEED * deltaTime * angle.x);
+        position.add(SPEED * deltaTime * moveBulletDraft.get(Math.abs(angle.angleDeg())).x,
+                SPEED * deltaTime * moveBulletDraft.get(Math.abs(angle.angleDeg())).y);
         if (position.x > Gdx.graphics.getWidth()
                 || position.x < 0
                 || position.y > Gdx.graphics.getHeight()
@@ -66,6 +96,7 @@ public class Bullet {
     }
 
     public void render(SpriteBatch batch) {
+        collisionRect.setPosition(position);
         batch.draw(
                 textureRegion,
                 position.x,

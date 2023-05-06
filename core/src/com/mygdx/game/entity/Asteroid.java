@@ -9,8 +9,9 @@ import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.utils.Bound;
 
 public class Asteroid {
-    private final float size = MathUtils.random(32, 64);
-    private final float halfSize = size / 2;
+    public static final int MAX_ASTEROIDS_COUNT = 5;
+    private final int size = MathUtils.random(32, 64);
+    private final int halfSize = size / 2;
     private final Vector2 speed;
     private final Vector2 position = new Vector2();
     private final Texture texture;
@@ -24,7 +25,7 @@ public class Asteroid {
     public Asteroid(float x, float y) {
         this.texture = new Texture("asteroid.png");
         this.textureRegion = new TextureRegion(texture);
-        this.collisionRect = new CollisionRect(x, y, (int) size);
+        this.collisionRect = new CollisionRect(x, y, size, size);
         position.set(x, y);
         speed = new Vector2(MathUtils.random(-2f, 2f), MathUtils.random(-2f, 2f));
         this.screenWidth = Gdx.graphics.getWidth();
@@ -35,7 +36,7 @@ public class Asteroid {
         return speed;
     }
 
-    public void setSpeed(float x, float y){
+    public void setSpeed(float x, float y) {
         speed.set(x, y);
     }
 

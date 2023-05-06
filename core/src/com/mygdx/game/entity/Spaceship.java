@@ -8,10 +8,10 @@ import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.utils.Bound;
 
 public class Spaceship {
-    public static final float SPACESHIP_SPEED = 180;
+    public static final int SPACESHIP_SPEED = 180;
 
-    private final float size = 64;
-    private final float halfSize = size / 2;
+    private final int size = 64;
+    private final int halfSize = size / 2;
     private final Vector2 position = new Vector2();
     private final Vector2 angle = new Vector2();
 
@@ -27,9 +27,9 @@ public class Spaceship {
     public Spaceship() {
         this.texture = new Texture("player_spaceship.png");
         this.textureRegion = new TextureRegion(texture);
-        position.set(Gdx.graphics.getWidth() / 2 - size / 2,
-                Gdx.graphics.getHeight() / 2 - size / 2);
-        this.collisionRect = new CollisionRect(position.x, position.y, (int) size);
+        position.set((Gdx.graphics.getWidth() - size) / 2,
+                (Gdx.graphics.getHeight() - size) / 2);
+        this.collisionRect = new CollisionRect(position.x, position.y, size, size);
         this.screenWidth = Gdx.graphics.getWidth();
         this.screenHeight = Gdx.graphics.getHeight();
     }
