@@ -90,7 +90,8 @@ public class MainGameScreen implements Screen {
                             (Gdx.graphics.getHeight() - spaceship.getSize()) / 2);
                     destroyedAsteroids.add(asteroids.get(i));
                 } else {
-                    game.setScreen(new MainMenuScreen(game));
+                    this.dispose();
+                    game.setScreen(new GameOverScreen(game, score));
                 }
             }
             for (int j = i + 1; j < asteroids.size(); j++) {

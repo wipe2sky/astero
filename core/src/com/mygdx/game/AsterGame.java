@@ -23,7 +23,6 @@ public class AsterGame extends Game {
 
     @Override
     public void render() {
-//        this.getScreen().render(Gdx.graphics.getDeltaTime());
         super.render();
     }
 }
