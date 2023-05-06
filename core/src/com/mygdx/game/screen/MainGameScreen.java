@@ -2,6 +2,7 @@ package com.mygdx.game.screen;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.math.MathUtils;
@@ -10,6 +11,7 @@ import com.mygdx.game.AsterGame;
 import com.mygdx.game.entity.Asteroid;
 import com.mygdx.game.entity.Bullet;
 import com.mygdx.game.entity.Explosion;
+import com.mygdx.game.entity.Health;
 import com.mygdx.game.entity.Spaceship;
 
 import java.util.ArrayList;
@@ -23,19 +25,25 @@ public class MainGameScreen implements Screen {
 
     private final AsterGame game;
     private final Spaceship spaceship;
+    private final Health health;
     private float shootTimer;
     private List<Asteroid> asteroids;
     private List<Bullet> bullets;
     private List<Explosion> explosions;
     private BitmapFont scoreFont;
+    private BitmapFont heathFont;
     private int score;
-    GlyphLayout scoreLayout;
+    private int healthCount;
+    private GlyphLayout scoreLayout;
+    private GlyphLayout healthLayout;
 
 
     public MainGameScreen(AsterGame game) {
         this.game = game;
         this.spaceship = new Spaceship();
+        this.health = new Health();
         this.shootTimer = 0;
+        this.healthCount = 3;
         this.asteroids = IntStream.range(0, MAX_ASTEROIDS_COUNT)
                 .mapToObj(i -> {
                     int x = MathUtils.random(Gdx.graphics.getWidth());
@@ -46,6 +54,8 @@ public class MainGameScreen implements Screen {
         this.explosions = new ArrayList<>();
         this.scoreFont = new BitmapFont(Gdx.files.internal("font/score.fnt"));
         this.scoreLayout = new GlyphLayout(scoreFont, String.valueOf(score));
+        this.heathFont = new BitmapFont(Gdx.files.internal("font/score.fnt"));
+        this.healthLayout = new GlyphLayout(scoreFont, String.valueOf(healthCount));
     }
 
     @Override
@@ -72,7 +82,16 @@ public class MainGameScreen implements Screen {
         for (int i = 0; i < asteroids.size(); i++) {
             asteroids.get(i).moveTo();
             if (spaceship.getCollisionRect().collidesWith(asteroids.get(i).getCollisionRect())) {
-                game.setScreen(new MainMenuScreen(game));
+                if (healthCount > 1) {
+                    healthCount--;
+                    explosions.add(new Explosion(asteroids.get(i).getPosition().x, asteroids.get(i).getPosition().y));
+                    explosions.add(new Explosion(spaceship.getPosition().x, spaceship.getPosition().y));
+                    spaceship.getPosition().set((Gdx.graphics.getWidth() - spaceship.getSize()) / 2,
+                            (Gdx.graphics.getHeight() - spaceship.getSize()) / 2);
+                    destroyedAsteroids.add(asteroids.get(i));
+                } else {
+                    game.setScreen(new MainMenuScreen(game));
+                }
             }
             for (int j = i + 1; j < asteroids.size(); j++) {
                 if (asteroids.get(i).getCollisionRect().collidesWith(asteroids.get(j).getCollisionRect())) {
@@ -85,7 +104,7 @@ public class MainGameScreen implements Screen {
         List<Explosion> explosionsToRemove = new ArrayList<>();
         explosions.forEach(explosion -> {
             explosion.update(delta);
-            if(explosion.isRemoved()){
+            if (explosion.isRemoved()) {
                 explosionsToRemove.add(explosion);
             }
         });
@@ -123,11 +142,25 @@ public class MainGameScreen implements Screen {
 
         game.batch.begin();
         scoreLayout.setText(scoreFont, "SCORE:" + score);
-        scoreFont.draw(game.batch, scoreLayout, 40, Gdx.graphics.getHeight() - 20 - scoreLayout.height);
+        scoreFont.draw(game.batch, scoreLayout, 20, Gdx.graphics.getHeight() - 20 - scoreLayout.height);
+
+        if (healthCount == 3){
+            heathFont.setColor(Color.GREEN);
+        } if (healthCount == 2){
+            heathFont.setColor(Color.YELLOW);
+        } else if(healthCount < 2){
+            heathFont.setColor(Color.RED);
+        }
+        healthLayout.setText(heathFont, "x" + healthCount);
+        heathFont.draw(game.batch, healthLayout, Gdx.graphics.getWidth() - healthLayout.width - 25,
+                Gdx.graphics.getHeight() - 20 - healthLayout.height);
+
+
         spaceship.render(game.batch);
         asteroids.forEach(asteroid -> asteroid.render(game.batch));
         bullets.forEach(bullet -> bullet.render(game.batch));
         explosions.forEach(explosion -> explosion.render(game.batch));
+        health.render(game.batch);
         game.batch.end();
     }
 
@@ -156,5 +189,6 @@ public class MainGameScreen implements Screen {
         spaceship.dispose();
         bullets.forEach(Bullet::dispose);
         asteroids.forEach(Asteroid::dispose);
+        health.dispose();
     }
 }
