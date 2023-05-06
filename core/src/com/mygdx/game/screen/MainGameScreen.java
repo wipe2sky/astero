@@ -6,31 +6,29 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.mygdx.game.AsterGame;
 import com.mygdx.game.entity.Asteroid;
+import com.mygdx.game.entity.Bullet;
 import com.mygdx.game.entity.Spaceship;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class MainGameScreen implements Screen {
 
-    private Spaceship spaceship;
-
-    private List<Asteroid> asteroids = new ArrayList<>();
-
-    private AsterGame game;
+    private final AsterGame game;
+    private final Spaceship spaceship;
+    private List<Asteroid> asteroids;
+    private Bullet bullet;
 
     public MainGameScreen(AsterGame game) {
         this.game = game;
-        spaceship = new Spaceship();
-        asteroids.addAll(IntStream.range(0, 5)
+        this.spaceship = new Spaceship();
+        this.asteroids = IntStream.range(0, 5)
                 .mapToObj(i -> {
                     int x = MathUtils.random(Gdx.graphics.getWidth());
                     int y = MathUtils.random(Gdx.graphics.getHeight());
                     return new Asteroid(x, y);
-                })
-                .collect(Collectors.toList()));
+                }).collect(Collectors.toList());
     }
 
     @Override
@@ -39,9 +37,16 @@ public class MainGameScreen implements Screen {
 
     @Override
     public void render(float delta) {
+
         ScreenUtils.clear(0, 0, 0, 1);
         spaceship.moveTo(game.inputProcessor.getDirection());
         spaceship.rotateTo(game.inputProcessor.getDirection());
+
+        if (bullet != null && !bullet.destroyed) {
+            bullet.update(delta);
+        } else if (game.inputProcessor.isSpacePressed()) {
+            bullet = new Bullet(spaceship.getPosition(), spaceship.getAngle(), spaceship.getSize());
+        }
 
         for (int i = 0; i < asteroids.size(); i++) {
             asteroids.get(i).moveTo();
@@ -59,6 +64,7 @@ public class MainGameScreen implements Screen {
         game.batch.begin();
         spaceship.render(game.batch);
         asteroids.forEach(asteroid -> asteroid.render(game.batch));
+        if (bullet != null && !bullet.destroyed) bullet.render(game.batch);
         game.batch.end();
     }
 
@@ -85,6 +91,7 @@ public class MainGameScreen implements Screen {
     @Override
     public void dispose() {
         spaceship.dispose();
+        bullet.dispose();
         asteroids.forEach(Asteroid::dispose);
     }
 }

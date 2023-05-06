@@ -12,12 +12,13 @@ public class KeyboardAdapter extends InputAdapter {
     private boolean rightPressed;
     private boolean upPressed;
     private boolean downPressed;
+    private boolean spacePressed;
 
     private final Vector2 mousePos = new Vector2();
     private final Vector2 direction = new Vector2();
 
-    public Vector2 getMousePos() {
-        return mousePos;
+    public boolean isSpacePressed() {
+        return spacePressed;
     }
 
     @Override
@@ -26,6 +27,7 @@ public class KeyboardAdapter extends InputAdapter {
         if (keycode == Input.Keys.D) rightPressed = true;
         if (keycode == Input.Keys.W) upPressed = true;
         if (keycode == Input.Keys.S) downPressed = true;
+        if (keycode == Input.Keys.SPACE) spacePressed = true;
         return false;
     }
 
@@ -35,6 +37,8 @@ public class KeyboardAdapter extends InputAdapter {
         if (keycode == Input.Keys.D) rightPressed = false;
         if (keycode == Input.Keys.W) upPressed = false;
         if (keycode == Input.Keys.S) downPressed = false;
+        if (keycode == Input.Keys.SPACE) spacePressed = false;
+
         return false;
     }
 

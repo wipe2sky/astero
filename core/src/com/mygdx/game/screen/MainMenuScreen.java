@@ -8,7 +8,7 @@ import com.mygdx.game.entity.Button;
 
 public class MainMenuScreen implements Screen {
     private static final int EXIT_BUTTON_Y = 200;
-    private static final int PLAY_BUTTON_Y = 400;
+    private static final int PLAY_BUTTON_Y = 440;
 
     private final AsterGame game;
     private final Button playButtonActive;

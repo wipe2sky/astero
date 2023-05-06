@@ -38,6 +38,18 @@ public class Spaceship {
         return collisionRect;
     }
 
+    public Vector2 getPosition() {
+        return position;
+    }
+
+    public Vector2 getAngle() {
+        return angle;
+    }
+
+    public float getSize() {
+        return size;
+    }
+
     public void render(Batch batch) {
         Bound.checkBounds(position, size, screenWidth, screenHeight);
         collisionRect.setPosition(position);
