@@ -18,10 +18,10 @@ public class MainMenuScreen implements Screen {
 
     public MainMenuScreen(AsterGame game) {
         this.game = game;
-        this.playButtonActive = new Button(250, 120, "play_button_active.png");
-        this.playButtonInactive = new Button(250, 120, "play_button_inactive.png");
-        this.exitButtonActive = new Button(300, 120, "exit_button_active.png");
-        this.exitButtonInactive = new Button(300, 120, "exit_button_inactive.png");
+        this.playButtonActive = new Button(250, 120, "button/play_button_active.png");
+        this.playButtonInactive = new Button(250, 120, "button/play_button_inactive.png");
+        this.exitButtonActive = new Button(300, 120, "button/exit_button_active.png");
+        this.exitButtonInactive = new Button(300, 120, "button/exit_button_inactive.png");
     }
 
     @Override

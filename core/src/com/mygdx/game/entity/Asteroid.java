@@ -8,6 +8,9 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.utils.Bound;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Asteroid {
     public static final int MAX_ASTEROIDS_COUNT = 5;
     private final int size = MathUtils.random(32, 64);
@@ -15,6 +18,7 @@ public class Asteroid {
     private final Vector2 speed;
     private final Vector2 position = new Vector2();
     private final Texture texture;
+    private final List<Texture> textures = new ArrayList<>();
     private float rotation = MathUtils.random(0, 360);
     private final float screenWidth;
     private final float screenHeight;
@@ -23,13 +27,25 @@ public class Asteroid {
 
 
     public Asteroid(float x, float y) {
-        this.texture = new Texture("asteroid.png");
+        setTextures();
+        this.texture = textures.get(MathUtils.random(0, textures.size() - 1));
         this.textureRegion = new TextureRegion(texture);
         this.collisionRect = new CollisionRect(x, y, size, size);
         position.set(x, y);
         speed = new Vector2(MathUtils.random(-2f, 2f), MathUtils.random(-2f, 2f));
         this.screenWidth = Gdx.graphics.getWidth();
         this.screenHeight = Gdx.graphics.getHeight();
+    }
+
+    private void setTextures() {
+        textures.add(new Texture("meteor/meteorBrown_big1.png"));
+        textures.add(new Texture("meteor/meteorBrown_big2.png"));
+        textures.add(new Texture("meteor/meteorBrown_big3.png"));
+        textures.add(new Texture("meteor/meteorBrown_big4.png"));
+        textures.add(new Texture("meteor/meteorGrey_big1.png"));
+        textures.add(new Texture("meteor/meteorGrey_big2.png"));
+        textures.add(new Texture("meteor/meteorGrey_big3.png"));
+        textures.add(new Texture("meteor/meteorGrey_big4.png"));
     }
 
     public Vector2 getSpeed() {
