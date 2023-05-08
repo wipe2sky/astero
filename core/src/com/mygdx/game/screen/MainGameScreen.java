@@ -16,7 +16,6 @@ import com.mygdx.game.entity.Spaceship;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 
 public class MainGameScreen implements Screen {
@@ -66,15 +65,15 @@ public class MainGameScreen implements Screen {
         List<Explosion> explosionsToRemove = getExplosionsToRemove(delta);
 
         bullets.forEach(bullet ->
-            asteroids.forEach(asteroid ->
-            {
-                if (bullet.getCollisionRect().collidesWith(asteroid.getCollisionRect())) {
-                    destroyedBullets.add(bullet);
-                    destroyedAsteroids.add(asteroid);
-                    explosions.add(new Explosion(asteroid.getPosition().x, asteroid.getPosition().y));
-                    score.increaseScore();
-                }
-            })
+                asteroids.forEach(asteroid ->
+                {
+                    if (bullet.getCollisionRect().collidesWith(asteroid.getCollisionRect())) {
+                        destroyedBullets.add(bullet);
+                        destroyedAsteroids.add(asteroid);
+                        explosions.add(new Explosion(asteroid.getPosition().x, asteroid.getPosition().y));
+                        score.increaseScore();
+                    }
+                })
         );
 
         asteroids.removeAll(destroyedAsteroids);
@@ -131,10 +130,15 @@ public class MainGameScreen implements Screen {
     }
 
     private List<Asteroid> createAsteroids(int count) {
-        return IntStream.range(0, count)
-                .mapToObj(i -> new Asteroid(MathUtils.random(Gdx.graphics.getWidth()),
-                        MathUtils.random(Gdx.graphics.getHeight())))
-                .collect(Collectors.toList());
+        List<Asteroid> asters = new ArrayList<>();
+        while (asters.size() <= count) {
+            Asteroid asteroid = new Asteroid(MathUtils.random(Gdx.graphics.getWidth()),
+                    MathUtils.random(Gdx.graphics.getHeight()));
+            if (!asteroid.getCollisionRect().collidesWith(spaceship.getCollisionRect())) {
+                asters.add(asteroid);
+            }
+        }
+        return asters;
     }
 
     public void addAsteroids(int count) {
