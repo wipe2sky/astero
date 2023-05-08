@@ -9,37 +9,43 @@ import com.badlogic.gdx.math.Vector2;
 import java.util.HashMap;
 
 public class Bullet {
-    public static final int MAX_COUNT = 5;
-    public static final float SHOOT_WAIT_TIME = 0.3f;
     private static final int SPEED = 300;
     private static final int WIDTH = 10;
     private static final int HEIGHT = 32;
-    private static final float HALF_WIDTH = WIDTH >> 1;
-    private static final float HALF_HEIGHT = HEIGHT >> 1;
+    private static final float HALF_WIDTH = WIDTH / 2f;
+    private static final float HALF_HEIGHT = HEIGHT / 2f;
     private final Texture texture;
     private final TextureRegion textureRegion;
-    private final Vector2 position = new Vector2();
-    private final Vector2 angle = new Vector2();
+    private final Vector2 position;
+    private final Vector2 angle;
     private final HashMap<Float, Vector2> startBulletOffset = new HashMap<>();
-    private final HashMap<Float, Vector2> moveBulletOffset = new HashMap<>();
+    private static final HashMap<Float, Vector2> MOVE_BULLET_OFFSET = new HashMap<>();
     private final CollisionRect collisionRect;
-
 
     private boolean destroyed;
 
+    static {
+        MOVE_BULLET_OFFSET.put(0f, new Vector2(0, 1));
+        MOVE_BULLET_OFFSET.put(45f, new Vector2(-1, 1));
+        MOVE_BULLET_OFFSET.put(90f, new Vector2(-1, 0));
+        MOVE_BULLET_OFFSET.put(135f, new Vector2(-1, -1));
+        MOVE_BULLET_OFFSET.put(180f, new Vector2(0, -1));
+        MOVE_BULLET_OFFSET.put(225f, new Vector2(1, -1));
+        MOVE_BULLET_OFFSET.put(270f, new Vector2(1, 0));
+        MOVE_BULLET_OFFSET.put(315f, new Vector2(1, 1));
+        MOVE_BULLET_OFFSET.put(360f, new Vector2(0, 0));
+    }
 
     public Bullet(Vector2 position, Vector2 angle, float size) {
-        this.position.set(position).add(size / 2, size + 1);
+        this.position = new Vector2().set(position).add(size / 2, size + 1);
         setStartBulletOffset(size);
-        setMoveBulletDraft();
         calcPosition(angle, position);
-        this.angle.set(angle);
+        this.angle = new Vector2().set(angle);
         this.collisionRect = new CollisionRect(position.x, position.y, WIDTH, HEIGHT);
         this.texture = new Texture("bullet.png");
 
         this.textureRegion = new TextureRegion(texture);
     }
-
 
     public CollisionRect getCollisionRect() {
         return collisionRect;
@@ -61,17 +67,6 @@ public class Bullet {
         startBulletOffset.put(360f, new Vector2(size / 2 - 5, size + 4));
     }
 
-    private void setMoveBulletDraft() {
-        moveBulletOffset.put(0f, new Vector2(0, 1));
-        moveBulletOffset.put(45f, new Vector2(-1, 1));
-        moveBulletOffset.put(90f, new Vector2(-1, 0));
-        moveBulletOffset.put(135f, new Vector2(-1, -1));
-        moveBulletOffset.put(180f, new Vector2(0, -1));
-        moveBulletOffset.put(225f, new Vector2(1, -1));
-        moveBulletOffset.put(270f, new Vector2(1, 0));
-        moveBulletOffset.put(315f, new Vector2(1, 1));
-        moveBulletOffset.put(360f, new Vector2(0, 0));
-    }
 
     private void calcPosition(Vector2 angle, Vector2 position) {
         this.position.set(position).add(startBulletOffset.get(Math.abs(angle.angleDeg())));
@@ -79,15 +74,12 @@ public class Bullet {
 
     public void update(float deltaTime) {
         if (angle.x == 0.0f && angle.y == 0.0f) angle.set(3, 0);
-        position.add(SPEED * deltaTime * moveBulletOffset.get(Math.abs(angle.angleDeg())).x,
-                SPEED * deltaTime * moveBulletOffset.get(Math.abs(angle.angleDeg())).y);
-        if (position.x > Gdx.graphics.getWidth()
-                || position.x < 0
-                || position.y > Gdx.graphics.getHeight()
-                || position.y < 0) {
-            destroyed = true;
-        }
+        position.add(SPEED * deltaTime * MOVE_BULLET_OFFSET.get(Math.abs(angle.angleDeg())).x,
+                SPEED * deltaTime * MOVE_BULLET_OFFSET.get(Math.abs(angle.angleDeg())).y);
+
+        checkBound();
     }
+
 
     public void render(SpriteBatch batch) {
         collisionRect.setPosition(position);
@@ -107,5 +99,14 @@ public class Bullet {
 
     public void dispose() {
         texture.dispose();
+    }
+
+    private void checkBound() {
+        if (position.x > Gdx.graphics.getWidth()
+                || position.x < 0
+                || position.y > Gdx.graphics.getHeight()
+                || position.y < 0) {
+            destroyed = true;
+        }
     }
 }

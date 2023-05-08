@@ -2,7 +2,6 @@ package com.mygdx.game.screen;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
@@ -20,45 +19,36 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static com.mygdx.game.entity.Asteroid.MAX_ASTEROIDS_COUNT;
 
 public class MainGameScreen implements Screen {
+    private static final int MAX_ASTEROIDS_COUNT = 15;
+    private static final int MAX_BULLET_COUNT = 5;
+    private static final float SHOOT_WAIT_TIME = 0.3f;
+    private static final int HEALTH_COUNT = 3;
 
     private final AsterGame game;
     private final Spaceship spaceship;
     private final Health health;
     private float shootTimer;
     private final Texture backgroundTexture;
-
-    private List<Asteroid> asteroids;
-    private List<Bullet> bullets;
-    private List<Explosion> explosions;
-    private BitmapFont scoreFont;
-    private BitmapFont heathFont;
+    private final List<Asteroid> asteroids;
+    private final List<Bullet> bullets;
+    private final List<Explosion> explosions;
+    private final BitmapFont scoreFont;
+    private final GlyphLayout scoreLayout;
     private int score;
-    private int healthCount;
-    private GlyphLayout scoreLayout;
-    private GlyphLayout healthLayout;
 
 
     public MainGameScreen(AsterGame game) {
         this.game = game;
         this.spaceship = new Spaceship();
-        this.health = new Health();
-        this.shootTimer = 0;
-        this.healthCount = 3;
-        this.asteroids = IntStream.range(0, MAX_ASTEROIDS_COUNT)
-                .mapToObj(i -> {
-                    int x = MathUtils.random(Gdx.graphics.getWidth());
-                    int y = MathUtils.random(Gdx.graphics.getHeight());
-                    return new Asteroid(x, y);
-                }).collect(Collectors.toList());
+        this.health = new Health(HEALTH_COUNT);
+        this.asteroids = createAsteroids();
         this.bullets = new ArrayList<>();
         this.explosions = new ArrayList<>();
         this.scoreFont = new BitmapFont(Gdx.files.internal("font/score.fnt"));
         this.scoreLayout = new GlyphLayout(scoreFont, String.valueOf(score));
-        this.heathFont = new BitmapFont(Gdx.files.internal("font/score.fnt"));
-        this.healthLayout = new GlyphLayout(scoreFont, String.valueOf(healthCount));
+
         this.backgroundTexture = new Texture("background.jpg");
     }
 
@@ -68,51 +58,16 @@ public class MainGameScreen implements Screen {
 
     @Override
     public void render(float delta) {
-
         ScreenUtils.clear(0, 0, 0, 1);
+
         spaceship.moveTo(game.inputProcessor.getDirection());
         spaceship.rotateTo(game.inputProcessor.getDirection());
 
-        List<Bullet> destroyedBullets = new ArrayList<>();
-        bullets.forEach(bullet -> {
-            bullet.update(delta);
-            if (bullet.isDestroyed()) {
-                destroyedBullets.add(bullet);
-            }
-        });
+        List<Bullet> destroyedBullets = getDestroyedBullets(delta);
 
+        List<Asteroid> destroyedAsteroids = processAsteroidsAndReturnDestroyed();
 
-        List<Asteroid> destroyedAsteroids = new ArrayList<>();
-        for (int i = 0; i < asteroids.size(); i++) {
-            asteroids.get(i).moveTo();
-            if (spaceship.getCollisionRect().collidesWith(asteroids.get(i).getCollisionRect())) {
-                if (healthCount > 1) {
-                    healthCount--;
-                    explosions.add(new Explosion(asteroids.get(i).getPosition().x, asteroids.get(i).getPosition().y));
-                    explosions.add(new Explosion(spaceship.getPosition().x, spaceship.getPosition().y));
-                    spaceship.getPosition().set((Gdx.graphics.getWidth() - spaceship.getSize()) / 2,
-                            (Gdx.graphics.getHeight() - spaceship.getSize()) / 2);
-                    destroyedAsteroids.add(asteroids.get(i));
-                } else {
-                    this.dispose();
-                    game.setScreen(new GameOverScreen(game, score));
-                }
-            }
-            for (int j = i + 1; j < asteroids.size(); j++) {
-                if (asteroids.get(i).getCollisionRect().collidesWith(asteroids.get(j).getCollisionRect())) {
-                    asteroids.get(i).setSpeed(-asteroids.get(i).getSpeed().x, asteroids.get(i).getSpeed().y);
-                    asteroids.get(j).setSpeed(asteroids.get(j).getSpeed().x, -asteroids.get(j).getSpeed().y);
-                }
-            }
-        }
-
-        List<Explosion> explosionsToRemove = new ArrayList<>();
-        explosions.forEach(explosion -> {
-            explosion.update(delta);
-            if (explosion.isRemoved()) {
-                explosionsToRemove.add(explosion);
-            }
-        });
+        List<Explosion> explosionsToRemove = getExplosionsToRemove(delta);
 
         bullets.forEach(bullet -> {
             asteroids.forEach(asteroid ->
@@ -130,44 +85,20 @@ public class MainGameScreen implements Screen {
         bullets.removeAll(destroyedBullets);
         explosions.removeAll(explosionsToRemove);
 
-        while (asteroids.size() < MAX_ASTEROIDS_COUNT) {
-            asteroids.add(new Asteroid(MathUtils.random(Gdx.graphics.getWidth()),
-                    MathUtils.random(Gdx.graphics.getWidth())));
-        }
-
-
-        shootTimer += delta;
-        if (game.inputProcessor.isSpacePressed()
-                && bullets.size() < Bullet.MAX_COUNT
-                && shootTimer >= Bullet.SHOOT_WAIT_TIME) {
-            shootTimer = 0;
-            bullets.add(new Bullet(spaceship.getPosition(), spaceship.getAngle(), spaceship.getSize()));
-        }
-
+        addAsteroids(MAX_ASTEROIDS_COUNT - asteroids.size());
+        addBullets(delta);
 
         game.batch.begin();
+
         game.batch.draw(backgroundTexture, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        scoreLayout.setText(scoreFont, "SCORE:" + score);
-        scoreFont.draw(game.batch, scoreLayout, 20, Gdx.graphics.getHeight() - 20 - scoreLayout.height);
-
-        if (healthCount == 3) {
-            heathFont.setColor(Color.GREEN);
-        }
-        if (healthCount == 2) {
-            heathFont.setColor(Color.YELLOW);
-        } else if (healthCount < 2) {
-            heathFont.setColor(Color.RED);
-        }
-        healthLayout.setText(heathFont, "x" + healthCount);
-        heathFont.draw(game.batch, healthLayout, Gdx.graphics.getWidth() - healthLayout.width - 25,
-                Gdx.graphics.getHeight() - 20 - healthLayout.height);
-
-
-        spaceship.render(game.batch);
         asteroids.forEach(asteroid -> asteroid.render(game.batch));
         bullets.forEach(bullet -> bullet.render(game.batch));
         explosions.forEach(explosion -> explosion.render(game.batch));
+        spaceship.render(game.batch);
+        scoreLayout.setText(scoreFont, "SCORE:" + score);
+        scoreFont.draw(game.batch, scoreLayout, 20, Gdx.graphics.getHeight() - 20 - scoreLayout.height);
         health.render(game.batch);
+
         game.batch.end();
     }
 
@@ -198,5 +129,71 @@ public class MainGameScreen implements Screen {
         asteroids.forEach(Asteroid::dispose);
         health.dispose();
         backgroundTexture.dispose();
+    }
+
+    private List<Asteroid> createAsteroids() {
+        return createAsteroids(MAX_ASTEROIDS_COUNT);
+    }
+
+    private List<Asteroid> createAsteroids(int count) {
+        return IntStream.range(0, count)
+                .mapToObj(i -> new Asteroid(MathUtils.random(Gdx.graphics.getWidth()),
+                        MathUtils.random(Gdx.graphics.getHeight())))
+                .collect(Collectors.toList());
+    }
+
+    public void addAsteroids(int count) {
+        asteroids.addAll(createAsteroids(count));
+    }
+
+    private List<Bullet> getDestroyedBullets(float delta) {
+        return bullets.stream()
+                .peek(bullet -> bullet.update(delta))
+                .filter(Bullet::isDestroyed)
+                .collect(Collectors.toList());
+    }
+
+    private List<Asteroid> processAsteroidsAndReturnDestroyed() {
+        List<Asteroid> destroyedAsteroids = new ArrayList<>();
+        for (int i = 0; i < asteroids.size(); i++) {
+            asteroids.get(i).moveTo();
+            if (spaceship.getCollisionRect().collidesWith(asteroids.get(i).getCollisionRect())) {
+                if (health.getHealthCount() > 1) {
+                    health.decreaseHealthCount();
+                    explosions.add(new Explosion(asteroids.get(i).getPosition().x, asteroids.get(i).getPosition().y));
+                    explosions.add(new Explosion(spaceship.getPosition().x, spaceship.getPosition().y));
+                    spaceship.getPosition().set((Gdx.graphics.getWidth() - spaceship.getSize()) / 2,
+                            (Gdx.graphics.getHeight() - spaceship.getSize()) / 2);
+                    destroyedAsteroids.add(asteroids.get(i));
+                } else {
+                    this.dispose();
+                    game.setScreen(new GameOverScreen(game, score));
+                }
+            }
+            for (int j = i + 1; j < asteroids.size(); j++) {
+                if (asteroids.get(i).getCollisionRect().collidesWith(asteroids.get(j).getCollisionRect())) {
+                    asteroids.get(i).setSpeed(-asteroids.get(i).getMoveDirection().x, asteroids.get(i).getMoveDirection().y);
+                    asteroids.get(j).setSpeed(asteroids.get(j).getMoveDirection().x, -asteroids.get(j).getMoveDirection().y);
+                }
+            }
+        }
+        return destroyedAsteroids;
+    }
+
+    private List<Explosion> getExplosionsToRemove(float delta) {
+        return explosions.stream()
+                .peek(explosion -> explosion.update(delta))
+                .filter(Explosion::isRemoved)
+                .collect(Collectors.toList());
+    }
+
+    private void addBullets(float delta) {
+        shootTimer += delta;
+        if (game.inputProcessor.isSpacePressed()
+                && bullets.size() < MAX_BULLET_COUNT
+                && shootTimer >= SHOOT_WAIT_TIME) {
+            shootTimer = 0;
+            bullets.add(new Bullet(spaceship.getPosition(), spaceship.getAngle(), spaceship.getSize()));
+        }
     }
 }

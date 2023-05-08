@@ -16,22 +16,19 @@ public class GameOverScreen implements Screen {
     private static int highScore = 0;
     private final Texture backgroundTexture;
     private final AsterGame game;
-    private int score;
+    private final int score;
+    private final Texture gameOverBanner;
+    private final BitmapFont scoreFont;
 
-    Texture gameOverBanner;
-    BitmapFont scoreFont;
 
     public GameOverScreen(AsterGame game, int score) {
         this.game = game;
         this.score = score;
-
-        if (score > highScore) {
-            highScore = score;
-        }
-
-        gameOverBanner = new Texture("game_over.png");
-        scoreFont = new BitmapFont(Gdx.files.internal("font/score.fnt"));
+        this.gameOverBanner = new Texture("game_over.png");
+        this.scoreFont = new BitmapFont(Gdx.files.internal("font/score.fnt"));
         this.backgroundTexture = new Texture("background.jpg");
+
+        if (score > highScore) highScore = score;
     }
 
     @Override
@@ -65,8 +62,8 @@ public class GameOverScreen implements Screen {
         float mainMenuX = (Gdx.graphics.getWidth() - mainMenuLayout.width) / 2;
         float mainMenuY = (Gdx.graphics.getHeight() - mainMenuLayout.height) / 2 - 200;
 
-        float touchX = Gdx.input.getX();
-        float touchY = Gdx.graphics.getHeight() - Gdx.input.getY();
+        int touchX = Gdx.input.getX();
+        int touchY = Gdx.graphics.getHeight() - Gdx.input.getY();
 
         if (Gdx.input.isTouched()) {
             if (touchX > tryAgainX

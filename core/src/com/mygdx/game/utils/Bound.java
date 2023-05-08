@@ -1,10 +1,13 @@
 package com.mygdx.game.utils;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 
 
 public class Bound {
-    public static void checkBounds(Vector2 position, float size, float screenWidth, float screenHeight) {
+    public static void screenExitControl(Vector2 position, float size) {
+        float screenWidth = Gdx.graphics.getWidth();
+        float screenHeight = Gdx.graphics.getHeight();
         if (position.x < -size) {
             position.set(screenWidth + size / 2, position.y);
         } else if (position.x > screenWidth + size) {

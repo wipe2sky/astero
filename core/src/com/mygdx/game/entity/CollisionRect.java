@@ -6,12 +6,12 @@ public class CollisionRect {
 
     private final int width;
     private final int height;
-    private Vector2 position = new Vector2();
+    private Vector2 position;
 
     public CollisionRect(float x, float y, int width, int height) {
-        position.set(x, y);
         this.width = width;
         this.height = height;
+        position = new Vector2(x, y);
     }
 
     public void setPosition(Vector2 newPosition) {

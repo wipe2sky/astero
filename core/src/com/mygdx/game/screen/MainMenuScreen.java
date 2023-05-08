@@ -9,7 +9,7 @@ import com.mygdx.game.entity.Button;
 
 public class MainMenuScreen implements Screen {
     private static final int EXIT_BUTTON_Y = 200;
-    private static final int PLAY_BUTTON_Y = 440;
+    private static final int PLAY_BUTTON_Y = 350;
 
     private final AsterGame game;
     private final Button playButtonActive;
@@ -45,14 +45,14 @@ public class MainMenuScreen implements Screen {
 
         if (Gdx.input.getX() > x && Gdx.input.getX() < x + exitButtonActive.getWidthButton()
                 && AsterGame.HEIGHT - Gdx.input.getY() > EXIT_BUTTON_Y
-                && AsterGame.HEIGHT - Gdx.input.getY() < EXIT_BUTTON_Y + exitButtonActive.getHeight()) {
-            game.batch.draw(exitButtonActive, x, EXIT_BUTTON_Y, exitButtonActive.getWidthButton(), exitButtonActive.getHeight());
+                && AsterGame.HEIGHT - Gdx.input.getY() < EXIT_BUTTON_Y + exitButtonActive.getHeightButton()) {
+            game.batch.draw(exitButtonActive, x, EXIT_BUTTON_Y, exitButtonActive.getWidthButton(), exitButtonActive.getHeightButton());
 
             if (Gdx.input.isTouched()) {
                 Gdx.app.exit();
             }
         } else {
-            game.batch.draw(exitButtonInactive, x, EXIT_BUTTON_Y, exitButtonActive.getWidthButton(), exitButtonActive.getHeight());
+            game.batch.draw(exitButtonInactive, x, EXIT_BUTTON_Y, exitButtonActive.getWidthButton(), exitButtonActive.getHeightButton());
         }
 
         x = AsterGame.WIDTH / 2 - playButtonActive.getWidthButton() / 2;

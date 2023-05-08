@@ -10,28 +10,21 @@ import com.mygdx.game.utils.Bound;
 public class Spaceship {
     public static final int SPACESHIP_SPEED = 180;
 
-    private final int size = 64;
-    private final int halfSize = size / 2;
-    private final Vector2 position = new Vector2();
+    private static final int SIZE = 64;
+    private static final int HALF_SIZE = SIZE / 2;
+    private final Vector2 position;
     private final Vector2 angle = new Vector2();
-
-    private final float screenWidth;
-    private final float screenHeight;
     private final Texture texture;
     private final CollisionRect collisionRect;
-
-
-    private TextureRegion textureRegion;
+    private final TextureRegion textureRegion;
 
 
     public Spaceship() {
         this.texture = new Texture("player_spaceship.png");
         this.textureRegion = new TextureRegion(texture);
-        position.set((Gdx.graphics.getWidth() - size) / 2,
-                (Gdx.graphics.getHeight() - size) / 2);
-        this.collisionRect = new CollisionRect(position.x, position.y, size, size);
-        this.screenWidth = Gdx.graphics.getWidth();
-        this.screenHeight = Gdx.graphics.getHeight();
+        this.position = new Vector2().set((Gdx.graphics.getWidth() - SIZE) / 2f,
+                (Gdx.graphics.getHeight() - SIZE) / 2f);
+        this.collisionRect = new CollisionRect(position.x, position.y, SIZE, SIZE);
     }
 
     public CollisionRect getCollisionRect() {
@@ -47,20 +40,20 @@ public class Spaceship {
     }
 
     public float getSize() {
-        return size;
+        return SIZE;
     }
 
     public void render(Batch batch) {
-        Bound.checkBounds(position, size, screenWidth, screenHeight);
+        Bound.screenExitControl(position, SIZE);
         collisionRect.setPosition(position);
         batch.draw(
                 textureRegion,
                 position.x,
                 position.y,
-                halfSize,
-                halfSize,
-                size,
-                size,
+                HALF_SIZE,
+                HALF_SIZE,
+                SIZE,
+                SIZE,
                 1,
                 1,
                 angle.angleDeg()
