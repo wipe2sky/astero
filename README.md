@@ -16,7 +16,6 @@ the number of rounds or bullet speed.
 
 ## Controls
 - `W` - move up
-- `S` - move down
 - `A` - move left
 - `D` - move right
-- `SPACE` - fire. You can press `SPACE` for single shot or hold for a series of shots.
+- `SPACE` or `LEFT BUTTON` - fire. You can press for single shot or hold for a series of shots.

@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 
 
 public class MainGameScreen implements Screen {
-    private static final int MAX_ASTEROIDS_COUNT = 15;
+    private static final int MAX_ASTEROIDS_COUNT = 3;
     private static final int MAX_BULLET_COUNT = 5;
     private static final float SHOOT_WAIT_TIME = 0.3f;
     private static final int HEALTH_COUNT = 3;
@@ -55,8 +55,8 @@ public class MainGameScreen implements Screen {
     public void render(float delta) {
         ScreenUtils.clear(0, 0, 0, 1);
 
-        spaceship.moveTo(game.inputProcessor.getDirection());
-        spaceship.rotateTo(game.inputProcessor.getDirection());
+        spaceship.moveTo(game.inputProcessor);
+        spaceship.rotateTo(game.inputProcessor.getMousePos());
 
         List<Bullet> destroyedBullets = getDestroyedBullets(delta);
 
@@ -131,7 +131,7 @@ public class MainGameScreen implements Screen {
 
     private List<Asteroid> createAsteroids(int count) {
         List<Asteroid> asters = new ArrayList<>();
-        while (asters.size() <= count) {
+        while (asters.size() < count) {
             Asteroid asteroid = new Asteroid(MathUtils.random(Gdx.graphics.getWidth()),
                     MathUtils.random(Gdx.graphics.getHeight()));
             if (!asteroid.getCollisionRect().collidesWith(spaceship.getCollisionRect())) {
@@ -188,11 +188,11 @@ public class MainGameScreen implements Screen {
 
     private void addBullets(float delta) {
         shootTimer += delta;
-        if (game.inputProcessor.isSpacePressed()
+        if ((game.inputProcessor.isSpacePressed() || game.inputProcessor.isLeftButtonPressed())
                 && bullets.size() < MAX_BULLET_COUNT
                 && shootTimer >= SHOOT_WAIT_TIME) {
             shootTimer = 0;
-            bullets.add(new Bullet(spaceship.getPosition(), spaceship.getAngle(), spaceship.getSize()));
+            bullets.add(new Bullet(spaceship.getPosition(), game.inputProcessor.getMousePos(), spaceship.getSize()));
         }
     }
 }

@@ -4,20 +4,38 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.math.Vector2;
-import com.kurtsevich.asteroids.entity.Spaceship;
 
 public class KeyboardAdapter extends InputAdapter {
+    private final Vector2 mousePos = new Vector2();
     private boolean leftPressed;
     private boolean rightPressed;
     private boolean upPressed;
-    private boolean downPressed;
     private boolean spacePressed;
+    private boolean leftButtonPressed;
 
-    private final Vector2 mousePos = new Vector2();
-    private final Vector2 direction = new Vector2();
+
+    public boolean isLeftPressed() {
+        return leftPressed;
+    }
+
+    public boolean isRightPressed() {
+        return rightPressed;
+    }
+
+    public boolean isUpPressed() {
+        return upPressed;
+    }
 
     public boolean isSpacePressed() {
         return spacePressed;
+    }
+
+    public boolean isLeftButtonPressed() {
+        return leftButtonPressed;
+    }
+
+    public Vector2 getMousePos() {
+        return mousePos;
     }
 
     @Override
@@ -25,7 +43,6 @@ public class KeyboardAdapter extends InputAdapter {
         if (keycode == Input.Keys.A) leftPressed = true;
         if (keycode == Input.Keys.D) rightPressed = true;
         if (keycode == Input.Keys.W) upPressed = true;
-        if (keycode == Input.Keys.S) downPressed = true;
         if (keycode == Input.Keys.SPACE) spacePressed = true;
         return false;
     }
@@ -35,24 +52,25 @@ public class KeyboardAdapter extends InputAdapter {
         if (keycode == Input.Keys.A) leftPressed = false;
         if (keycode == Input.Keys.D) rightPressed = false;
         if (keycode == Input.Keys.W) upPressed = false;
-        if (keycode == Input.Keys.S) downPressed = false;
         if (keycode == Input.Keys.SPACE) spacePressed = false;
         return false;
     }
 
     @Override
     public boolean mouseMoved(int screenX, int screenY) {
-        mousePos.set(screenX, screenY);
+        mousePos.set(screenX, Gdx.graphics.getHeight() - screenY);
         return false;
     }
 
-    public Vector2 getDirection() {
-        direction.set(0, 0);
+    @Override
+    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        if (button == Input.Buttons.LEFT) leftButtonPressed = true;
+        return false;
+    }
 
-        if (leftPressed) direction.add(-Spaceship.SPACESHIP_SPEED * Gdx.graphics.getDeltaTime(), 0);
-        if (rightPressed) direction.add(Spaceship.SPACESHIP_SPEED * Gdx.graphics.getDeltaTime(), 0);
-        if (upPressed) direction.add(0, Spaceship.SPACESHIP_SPEED * Gdx.graphics.getDeltaTime());
-        if (downPressed) direction.add(0, -Spaceship.SPACESHIP_SPEED * Gdx.graphics.getDeltaTime());
-        return direction;
+    @Override
+    public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+        if (button == Input.Buttons.LEFT) leftButtonPressed = false;
+        return false;
     }
 }

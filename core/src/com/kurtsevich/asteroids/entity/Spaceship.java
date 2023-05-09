@@ -4,7 +4,10 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+import com.kurtsevich.asteroids.AsterGame;
+import com.kurtsevich.asteroids.adapter.KeyboardAdapter;
 import com.kurtsevich.asteroids.utils.Bound;
 
 public class Spaceship {
@@ -22,7 +25,7 @@ public class Spaceship {
     public Spaceship() {
         this.texture = new Texture("player_spaceship.png");
         this.textureRegion = new TextureRegion(texture);
-        this.position = new Vector2().set((Gdx.graphics.getWidth() - SIZE) / 2f,
+        this.position = new Vector2((Gdx.graphics.getWidth() - SIZE) / 2f,
                 (Gdx.graphics.getHeight() - SIZE) / 2f);
         this.collisionRect = new CollisionRect(position.x, position.y, SIZE, SIZE);
     }
@@ -56,7 +59,7 @@ public class Spaceship {
                 SIZE,
                 1,
                 1,
-                angle.angleDeg()
+                angle.angleDeg() - 90
         );
     }
 
@@ -64,14 +67,14 @@ public class Spaceship {
         texture.dispose();
     }
 
-    public void moveTo(Vector2 direction) {
-        position.add(direction);
+    public void moveTo(KeyboardAdapter inputProcessor) {
+        if (inputProcessor.isLeftPressed()) position.add(-Spaceship.SPACESHIP_SPEED * Gdx.graphics.getDeltaTime(), 0);
+        if (inputProcessor.isRightPressed()) position.add(Spaceship.SPACESHIP_SPEED * Gdx.graphics.getDeltaTime(), 0);
+        if (inputProcessor.isUpPressed()) position.add(0, Spaceship.SPACESHIP_SPEED * Gdx.graphics.getDeltaTime());
     }
 
 
-    public void rotateTo(Vector2 direction) {
-        if (direction.x != 0 || direction.y != 0) {
-            angle.set(direction.y, -direction.x);
-        }
+    public void rotateTo(Vector2 mousePos) {
+        angle.set(mousePos).sub(position.x + HALF_SIZE, position.y + HALF_SIZE);
     }
 }
