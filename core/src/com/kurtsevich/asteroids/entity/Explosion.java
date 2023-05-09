@@ -1,4 +1,4 @@
-package com.mygdx.game.entity;
+package com.kurtsevich.asteroids.entity;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;

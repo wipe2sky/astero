@@ -1,11 +1,11 @@
-package com.mygdx.game.entity;
+package com.kurtsevich.asteroids.entity;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
-import com.mygdx.game.utils.Bound;
+import com.kurtsevich.asteroids.utils.Bound;
 
 public class Spaceship {
     public static final int SPACESHIP_SPEED = 180;

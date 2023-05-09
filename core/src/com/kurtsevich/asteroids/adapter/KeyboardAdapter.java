@@ -1,11 +1,10 @@
-package com.mygdx.game.adapter;
+package com.kurtsevich.asteroids.adapter;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.math.Vector2;
-
-import static com.mygdx.game.entity.Spaceship.SPACESHIP_SPEED;
+import com.kurtsevich.asteroids.entity.Spaceship;
 
 public class KeyboardAdapter extends InputAdapter {
     private boolean leftPressed;
@@ -50,10 +49,10 @@ public class KeyboardAdapter extends InputAdapter {
     public Vector2 getDirection() {
         direction.set(0, 0);
 
-        if (leftPressed) direction.add(-SPACESHIP_SPEED * Gdx.graphics.getDeltaTime(), 0);
-        if (rightPressed) direction.add(SPACESHIP_SPEED * Gdx.graphics.getDeltaTime(), 0);
-        if (upPressed) direction.add(0, SPACESHIP_SPEED * Gdx.graphics.getDeltaTime());
-        if (downPressed) direction.add(0, -SPACESHIP_SPEED * Gdx.graphics.getDeltaTime());
+        if (leftPressed) direction.add(-Spaceship.SPACESHIP_SPEED * Gdx.graphics.getDeltaTime(), 0);
+        if (rightPressed) direction.add(Spaceship.SPACESHIP_SPEED * Gdx.graphics.getDeltaTime(), 0);
+        if (upPressed) direction.add(0, Spaceship.SPACESHIP_SPEED * Gdx.graphics.getDeltaTime());
+        if (downPressed) direction.add(0, -Spaceship.SPACESHIP_SPEED * Gdx.graphics.getDeltaTime());
         return direction;
     }
 }

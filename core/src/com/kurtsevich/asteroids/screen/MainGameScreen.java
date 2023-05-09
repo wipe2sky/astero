@@ -1,17 +1,17 @@
-package com.mygdx.game.screen;
+package com.kurtsevich.asteroids.screen;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.ScreenUtils;
-import com.mygdx.game.AsterGame;
-import com.mygdx.game.entity.Asteroid;
-import com.mygdx.game.entity.Bullet;
-import com.mygdx.game.entity.Explosion;
-import com.mygdx.game.entity.Health;
-import com.mygdx.game.entity.Score;
-import com.mygdx.game.entity.Spaceship;
+import com.kurtsevich.asteroids.entity.Asteroid;
+import com.kurtsevich.asteroids.entity.Explosion;
+import com.kurtsevich.asteroids.entity.Score;
+import com.kurtsevich.asteroids.entity.Spaceship;
+import com.kurtsevich.asteroids.AsterGame;
+import com.kurtsevich.asteroids.entity.Bullet;
+import com.kurtsevich.asteroids.entity.Health;
 
 import java.util.ArrayList;
 import java.util.List;

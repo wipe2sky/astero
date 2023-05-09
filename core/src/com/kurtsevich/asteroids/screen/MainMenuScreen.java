@@ -1,11 +1,11 @@
-package com.mygdx.game.screen;
+package com.kurtsevich.asteroids.screen;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.utils.ScreenUtils;
-import com.mygdx.game.AsterGame;
-import com.mygdx.game.entity.Button;
+import com.kurtsevich.asteroids.AsterGame;
+import com.kurtsevich.asteroids.entity.Button;
 
 public class MainMenuScreen implements Screen {
     private static final int EXIT_BUTTON_Y = 200;

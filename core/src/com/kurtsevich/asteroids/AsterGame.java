@@ -1,10 +1,10 @@
-package com.mygdx.game;
+package com.kurtsevich.asteroids;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.mygdx.game.adapter.KeyboardAdapter;
-import com.mygdx.game.screen.MainMenuScreen;
+import com.kurtsevich.asteroids.adapter.KeyboardAdapter;
+import com.kurtsevich.asteroids.screen.MainMenuScreen;
 
 public class AsterGame extends Game {
     public static final int WIDTH = 1280;

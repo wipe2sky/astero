@@ -1,4 +1,4 @@
-package com.mygdx.game.screen;
+package com.kurtsevich.asteroids.screen;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
@@ -8,7 +8,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.ScreenUtils;
-import com.mygdx.game.AsterGame;
+import com.kurtsevich.asteroids.AsterGame;
 
 public class GameOverScreen implements Screen {
     private static final int BANNER_WIDTH = 500;

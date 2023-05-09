@@ -1,4 +1,4 @@
-package com.mygdx.game.utils;
+package com.kurtsevich.asteroids.utils;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;

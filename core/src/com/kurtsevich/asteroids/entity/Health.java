@@ -1,4 +1,4 @@
-package com.mygdx.game.entity;
+package com.kurtsevich.asteroids.entity;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
