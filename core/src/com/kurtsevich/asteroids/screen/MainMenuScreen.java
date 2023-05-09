@@ -41,11 +41,11 @@ public class MainMenuScreen implements Screen {
 
         game.batch.draw(backgroundTexture, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
-        int x = AsterGame.WIDTH / 2 - exitButtonActive.getWidthButton() / 2;
+        int x = Gdx.graphics.getWidth() / 2 - exitButtonActive.getWidthButton() / 2;
 
         if (Gdx.input.getX() > x && Gdx.input.getX() < x + exitButtonActive.getWidthButton()
-                && AsterGame.HEIGHT - Gdx.input.getY() > EXIT_BUTTON_Y
-                && AsterGame.HEIGHT - Gdx.input.getY() < EXIT_BUTTON_Y + exitButtonActive.getHeightButton()) {
+                && Gdx.graphics.getHeight() - Gdx.input.getY() > EXIT_BUTTON_Y
+                && Gdx.graphics.getHeight() - Gdx.input.getY() < EXIT_BUTTON_Y + exitButtonActive.getHeightButton()) {
             game.batch.draw(exitButtonActive, x, EXIT_BUTTON_Y, exitButtonActive.getWidthButton(), exitButtonActive.getHeightButton());
 
             if (Gdx.input.isTouched()) {
@@ -55,11 +55,11 @@ public class MainMenuScreen implements Screen {
             game.batch.draw(exitButtonInactive, x, EXIT_BUTTON_Y, exitButtonActive.getWidthButton(), exitButtonActive.getHeightButton());
         }
 
-        x = AsterGame.WIDTH / 2 - playButtonActive.getWidthButton() / 2;
+        x = Gdx.graphics.getWidth() / 2 - playButtonActive.getWidthButton() / 2;
 
         if (Gdx.input.getX() > x && Gdx.input.getX() < x + playButtonActive.getWidthButton()
-                && AsterGame.HEIGHT - Gdx.input.getY() > PLAY_BUTTON_Y
-                && AsterGame.HEIGHT - Gdx.input.getY() < PLAY_BUTTON_Y + playButtonActive.getHeightButton()) {
+                && Gdx.graphics.getHeight() - Gdx.input.getY() > PLAY_BUTTON_Y
+                && Gdx.graphics.getHeight() - Gdx.input.getY() < PLAY_BUTTON_Y + playButtonActive.getHeightButton()) {
 
             game.batch.draw(playButtonActive, x, PLAY_BUTTON_Y, playButtonActive.getWidthButton(), playButtonActive.getHeightButton());
 

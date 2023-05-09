@@ -7,9 +7,6 @@ import com.kurtsevich.asteroids.adapter.KeyboardAdapter;
 import com.kurtsevich.asteroids.screen.MainMenuScreen;
 
 public class AsterGame extends Game {
-    public static final int WIDTH = 1280;
-    public static final int HEIGHT = 720;
-
     public SpriteBatch batch;
     public KeyboardAdapter inputProcessor = new KeyboardAdapter();
 
@@ -19,10 +16,5 @@ public class AsterGame extends Game {
         Gdx.input.setInputProcessor(inputProcessor);
         batch = new SpriteBatch();
         this.setScreen(new MainMenuScreen(this));
-    }
-
-    @Override
-    public void render() {
-        super.render();
     }
 }
