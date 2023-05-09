@@ -12,7 +12,7 @@ import com.kurtsevich.asteroids.AsterGame;
 
 public class GameOverScreen implements Screen {
     private static final int BANNER_WIDTH = 500;
-    private static final int BANNER_HEIGHT = 200;
+    private static final int BANNER_HEIGHT = 300;
     private static int highScore = 0;
     private final Texture backgroundTexture;
     private final AsterGame game;
@@ -43,8 +43,8 @@ public class GameOverScreen implements Screen {
 
         game.batch.draw(backgroundTexture, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         game.batch.draw(gameOverBanner,
-                (Gdx.graphics.getWidth() - BANNER_WIDTH) >> 1,
-                ((Gdx.graphics.getHeight() - BANNER_HEIGHT) >> 1) - 15f,
+                (Gdx.graphics.getWidth() - BANNER_WIDTH) / 2f,
+                ((Gdx.graphics.getHeight() - BANNER_HEIGHT) / 2f) + 100f,
                 BANNER_WIDTH,
                 BANNER_HEIGHT
         );
