@@ -9,35 +9,29 @@ import com.kurtsevich.asteroids.utils.Bound;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 public class Asteroid {
     private final int size;
-    private final Vector2 moveDirection;
+    private final int speed;
     private final Vector2 position;
+    private final Vector2 nextPosition;
     private final Texture texture;
-    private float rotation;
+    private float angle;
+    private float rotationAngle;
     private final CollisionRect collisionRect;
     private final TextureRegion textureRegion;
 
 
     public Asteroid(float x, float y) {
-        List<Texture> textures = loadTextures();
-        this.texture = textures.get(MathUtils.random(0, textures.size() - 1));
+        this.texture = loadTextures().get(MathUtils.random(0, loadTextures().size() - 1));
+        this.speed = MathUtils.random(50, 150);
+        this.angle = MathUtils.random(0, 360);
+        this.rotationAngle = angle;
         this.textureRegion = new TextureRegion(texture);
         this.size = MathUtils.random(32, 64);
         this.collisionRect = new CollisionRect(x, y, size, size);
         this.position = new Vector2(x, y);
-        this.moveDirection = new Vector2(MathUtils.random(-2f, 2f), MathUtils.random(-2f, 2f));
-        this.rotation = MathUtils.random(0, 360);
-    }
-
-    public Vector2 getMoveDirection() {
-        return moveDirection;
-    }
-
-    public void setSpeed(float x, float y) {
-        moveDirection.set(x, y);
+        this.nextPosition = new Vector2(1, 1);
     }
 
     public Vector2 getPosition() {
@@ -62,6 +56,11 @@ public class Asteroid {
                 ));
     }
 
+
+    public void reflectAngle() {
+        angle = Math.abs(angle - 360);
+    }
+
     public void render(Batch batch) {
         rotate();
         Bound.screenExitControl(position, size);
@@ -76,15 +75,15 @@ public class Asteroid {
                 size,
                 1,
                 1,
-                rotation
+                rotationAngle
         );
     }
 
     private void rotate() {
-        if (rotation++ > 360) {
-            rotation = 0.15f;
+        if (rotationAngle++ > 360) {
+            rotationAngle = 0.15f;
         } else {
-            rotation += 0.15f;
+            rotationAngle += 0.15f;
         }
     }
 
@@ -92,7 +91,12 @@ public class Asteroid {
         texture.dispose();
     }
 
-    public void moveTo() {
-        position.add(moveDirection);
+    public void moveTo(float deltaTime) {
+        float stepLength = speed * deltaTime;
+        nextPosition.setLength(stepLength);
+        nextPosition.setAngleDeg(angle);
+
+        position.add(nextPosition);
+        collisionRect.setPosition(position);
     }
 }

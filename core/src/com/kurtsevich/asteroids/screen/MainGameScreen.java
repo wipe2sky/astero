@@ -5,13 +5,13 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.kurtsevich.asteroids.AsterGame;
 import com.kurtsevich.asteroids.entity.Asteroid;
+import com.kurtsevich.asteroids.entity.Bullet;
 import com.kurtsevich.asteroids.entity.Explosion;
+import com.kurtsevich.asteroids.entity.Health;
 import com.kurtsevich.asteroids.entity.Score;
 import com.kurtsevich.asteroids.entity.Spaceship;
-import com.kurtsevich.asteroids.AsterGame;
-import com.kurtsevich.asteroids.entity.Bullet;
-import com.kurtsevich.asteroids.entity.Health;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 
 
 public class MainGameScreen implements Screen {
-    private static final int MAX_ASTEROIDS_COUNT = 3;
+    private static final int MAX_ASTEROIDS_COUNT = 15;
     private static final int MAX_BULLET_COUNT = 5;
     private static final float SHOOT_WAIT_TIME = 0.3f;
     private static final int HEALTH_COUNT = 3;
@@ -52,17 +52,17 @@ public class MainGameScreen implements Screen {
     }
 
     @Override
-    public void render(float delta) {
+    public void render(float deltaTime) {
         ScreenUtils.clear(0, 0, 0, 1);
 
         spaceship.moveTo(game.inputProcessor);
         spaceship.rotateTo(game.inputProcessor.getMousePos());
 
-        List<Bullet> destroyedBullets = getDestroyedBullets(delta);
+        List<Bullet> destroyedBullets = getDestroyedBullets(deltaTime);
 
-        List<Asteroid> destroyedAsteroids = processAsteroidsAndReturnDestroyed();
+        List<Asteroid> destroyedAsteroids = processAsteroidsAndReturnDestroyed(deltaTime);
 
-        List<Explosion> explosionsToRemove = getExplosionsToRemove(delta);
+        List<Explosion> explosionsToRemove = getExplosionsToRemove(deltaTime);
 
         bullets.forEach(bullet ->
                 asteroids.forEach(asteroid ->
@@ -81,7 +81,7 @@ public class MainGameScreen implements Screen {
         explosions.removeAll(explosionsToRemove);
 
         addAsteroids(MAX_ASTEROIDS_COUNT - asteroids.size());
-        addBullets(delta);
+        addBullets(deltaTime, spaceship.getAngle().angleDeg());
 
         game.batch.begin();
 
@@ -152,10 +152,10 @@ public class MainGameScreen implements Screen {
                 .collect(Collectors.toList());
     }
 
-    private List<Asteroid> processAsteroidsAndReturnDestroyed() {
+    private List<Asteroid> processAsteroidsAndReturnDestroyed(float deltaTime) {
         List<Asteroid> destroyedAsteroids = new ArrayList<>();
         for (int i = 0; i < asteroids.size(); i++) {
-            asteroids.get(i).moveTo();
+            asteroids.get(i).moveTo(deltaTime);
             if (spaceship.getCollisionRect().collidesWith(asteroids.get(i).getCollisionRect())) {
                 if (health.getHealthCount() > 1) {
                     health.decreaseHealthCount();
@@ -171,8 +171,8 @@ public class MainGameScreen implements Screen {
             }
             for (int j = i + 1; j < asteroids.size(); j++) {
                 if (asteroids.get(i).getCollisionRect().collidesWith(asteroids.get(j).getCollisionRect())) {
-                    asteroids.get(i).setSpeed(-asteroids.get(i).getMoveDirection().x, asteroids.get(i).getMoveDirection().y);
-                    asteroids.get(j).setSpeed(asteroids.get(j).getMoveDirection().x, -asteroids.get(j).getMoveDirection().y);
+                    asteroids.get(i).reflectAngle();
+                    asteroids.get(j).reflectAngle();
                 }
             }
         }
@@ -186,13 +186,13 @@ public class MainGameScreen implements Screen {
                 .collect(Collectors.toList());
     }
 
-    private void addBullets(float delta) {
+    private void addBullets(float delta, float angle) {
         shootTimer += delta;
         if ((game.inputProcessor.isSpacePressed() || game.inputProcessor.isLeftButtonPressed())
                 && bullets.size() < MAX_BULLET_COUNT
                 && shootTimer >= SHOOT_WAIT_TIME) {
             shootTimer = 0;
-            bullets.add(new Bullet(spaceship.getPosition(), game.inputProcessor.getMousePos(), spaceship.getSize()));
+            bullets.add(new Bullet(spaceship.getPosition(), angle, spaceship.getSize()));
         }
     }
 }

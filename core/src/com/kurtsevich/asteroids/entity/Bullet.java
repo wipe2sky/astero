@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 
 public class Bullet {
@@ -16,16 +15,16 @@ public class Bullet {
     private final Texture texture;
     private final TextureRegion textureRegion;
     private final Vector2 position;
-    private final Vector2 textureAngle;
-    private final float bulletAngle;
+    private final Vector2 nextPosition;
+    private final float angle;
     private final CollisionRect collisionRect;
 
     private boolean destroyed;
 
-    public Bullet(Vector2 position, Vector2 mousePos, float size) {
-        this.textureAngle = new Vector2(mousePos).sub(position.x + HALF_WIDTH, position.y + HALF_HEIGHT);
-        this.bulletAngle = MathUtils.atan2(position.y - mousePos.y, position.x - mousePos.x);
-        this.position = new Vector2(position);
+    public Bullet(Vector2 position, float angle, float size) {
+        this.angle = angle;
+        this.position = new Vector2(position.x + size / 2 - 5, position.y + size / 2 - 15);
+        this.nextPosition = new Vector2(1, 1);
         this.collisionRect = new CollisionRect(position.x, position.y, WIDTH, HEIGHT);
         this.texture = new Texture("bullet.png");
 
@@ -41,16 +40,18 @@ public class Bullet {
     }
 
     public void update(float deltaTime) {
-        float vx = SPEED * -MathUtils.cos(bulletAngle);
-        float vy = SPEED * -MathUtils.sin(bulletAngle);
+        float stepLength = SPEED * deltaTime;
+        nextPosition.setLength(stepLength);
+        nextPosition.setAngleDeg(angle);
 
-        position.add(vx * deltaTime, vy * deltaTime);
+        position.add(nextPosition);
         checkBound();
-        collisionRect.setPosition(position);
     }
 
 
     public void render(SpriteBatch batch) {
+        collisionRect.setPosition(position);
+
         batch.draw(
                 textureRegion,
                 position.x,
@@ -61,7 +62,7 @@ public class Bullet {
                 HEIGHT,
                 1,
                 1,
-                textureAngle.angleDeg() - 90
+                angle - 90
         );
     }
 
