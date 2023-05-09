@@ -68,8 +68,8 @@ public class GameOverScreen implements Screen {
         if (Gdx.input.isTouched()) {
             if (touchX > tryAgainX
                     && touchX < tryAgainX + tryAgainLayout.width
-                    && touchY > touchY - tryAgainLayout.height
-                    && touchY + tryAgainLayout.height > tryAgainY) {
+                    && touchY + tryAgainLayout.height > tryAgainY
+                    && touchY < tryAgainLayout.height + tryAgainY) {
                 this.dispose();
                 game.batch.end();
                 game.setScreen(new MainGameScreen(game));
@@ -78,8 +78,8 @@ public class GameOverScreen implements Screen {
 
             if (touchX > mainMenuX
                     && touchX < mainMenuX + mainMenuLayout.width
-                    && touchY > touchY - mainMenuLayout.height
-                    && touchY + mainMenuLayout.height > mainMenuY) {
+                    && touchY  +mainMenuLayout.height> mainMenuY
+                    && touchY < mainMenuLayout.height + mainMenuY) {
                 this.dispose();
                 game.batch.end();
                 game.setScreen(new MainMenuScreen(game));
