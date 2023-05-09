@@ -73,4 +73,10 @@ public class KeyboardAdapter extends InputAdapter {
         if (button == Input.Buttons.LEFT) leftButtonPressed = false;
         return false;
     }
+
+    @Override
+    public boolean touchDragged(int screenX, int screenY, int pointer) {
+        mousePos.set(screenX, Gdx.graphics.getHeight() - screenY);
+        return false;
+    }
 }
